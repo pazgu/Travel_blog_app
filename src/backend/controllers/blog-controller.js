@@ -1,13 +1,15 @@
 import mongoose from "mongoose";
 import Blog from "../model/Blog";
 import User from "../model/User";
+import multer from 'multer';
 
 export const getAllBlogs = async (req, res, next) => {
   let blogs;
   try {
-    blogs = await Blog.find(); //to attempt to retrieve all blogs from the database
+    blogs = await Blog.find().populate("user"); 
+    //attempt to retrieve all blogs from the database (populate user to get his credentials to each post)
   } catch (err) {
-    return console.log(err);
+    return console.error(err);
   }
   if (!blogs) {
     return res.status(404).json({ message: "No Blogs Found" });
@@ -21,7 +23,7 @@ export const addBlog = async (req, res, next) => {
   try {
     existingUser = await User.findById(user);
   } catch (err) {
-    return console.log(err);
+    return console.error(err);
   }
   if (!existingUser) {
     return res.status(400).json({ message: "Unable To Find User By This Id" });
@@ -49,60 +51,11 @@ export const addBlog = async (req, res, next) => {
     With a session and transaction, I'll avoid this situation.
     */
   } catch (err) {
-    console.log(err);
+    console.error(err);
     return res.status(500).json({ message: err });
   }
   return res.status(200).json({ blog });
 };
-
-export const searchByTitleOrDescription = async (req, res, next) => {
-  const query = req.query.q; // Get the search query from the request
-  if (!query) {
-    return res.status(400).json({ message: "Please Provide A Search Query" });
-  }
-
-  //another way to do so:
-  /*
-    const { title, description, location } = req.query;
-
-  if (!title && !description && !location) {
-    return res.status(400).json({ message: "Please provide at least one search query parameter" });
-  }
-
-  let blogs;
-  try {
-    blogs = await Blog.find({
-      $or: [
-        { title: new RegExp(title, "i") },
-        { description: new RegExp(description, "i") },
-        { location: new RegExp(location, "i") },
-      ],
-    }).populate("user");
-
-  */
-
-  // Define the search criteria using regular expression
-  const searchCriteria = {
-    $or: [
-      { title: { $regex: query, $options: 'i' } }, // Search by title
-      { description: { $regex: query, $options: 'i' } }, // Search by description
-      { location: { $regex: query, $options: 'i' } }, // Search by location
-    ],
-  };
-  try {
-    // Search for blogs using the defined search criteria
-    const blogs = await Blog.find(searchCriteria);
-
-    // Return the search results as JSON
-    res.status(200).json({ blogs });
-  } catch (err) {
-    return console.error(err);
-  } 
-  if (!blogs){
-    return res.status(404).json({ message: "No Blog Found With This Search Query" });
-  }
-};
-
 
 export const updateBlog = async (req, res, next) => {
   const { title, description } = req.body; //for now I can only update this fields because image and user are frontend properties
@@ -116,9 +69,12 @@ export const updateBlog = async (req, res, next) => {
       // Finds the blog by ID and updates the title and description
       title, //shorthand of title: title
       description,
-    });
+    }, { new: true, runValidators: true }); // //so the new object will be returned and Mongoose will check its new values 
   } catch (err) {
-    return console.log(err);
+    if (err.name === "ValidationError") {
+      return res.status(400).json({ message: err.message });
+    }
+    return console.error(err);
   }
   if (!blog) {
     return res.status(500).json({ message: "Unable To Update The Blog" });
@@ -137,7 +93,7 @@ export const getById = async (req, res, next) => {
   try {
     blog = await Blog.findById(id);
   } catch (err) {
-    return console.log(err);
+    return console.error(err);
   }
   if (!blog) {
     return res.status(404).json({ message: "No Blog Found" });
@@ -167,7 +123,7 @@ export const deleteBlog = async (req, res, next) => {
     }
     return res.status(200).json({ message: "Blog Was Successfully Deleted" });
   } catch (err) {
-    return console.log(err);
+    return console.error(err);
   }
 };
 
@@ -181,7 +137,7 @@ export const getBlogsByUserId = async (req, res, next) => {
     userBlogs = await User.findById(userId).populate("blogs");
     //The populate method is used to retrieve the blogs property of the User model, associated with the current user
   } catch (err) {
-    return console.log(err);
+    return console.error(err);
   }
   if (!userId) {
     return res.status(404).json({ message: "Unable To Find User By This Id" });
@@ -189,6 +145,46 @@ export const getBlogsByUserId = async (req, res, next) => {
   if (!userBlogs) {
     return res.status(404).json({ message: "No Blog Found" });
   }
-  const blogs = userBlogs.blogs; //So the response json body will inculde only the blogs details without the user credentials
-  return res.status(200).json({ blogs });
+  //const blogs = userBlogs.blogs; //So the response json body will inculde only the blogs details without the user credentials
+  return res.status(200).json({ user: userBlogs });
 };
+
+// Set up Multer storage configuration
+const storage = multer.diskStorage({
+  destination: function (req, file, callback) {
+    // Define the destination directory where the uploaded files will be stored
+    callback(null, 'uploads/');
+  },
+  filename: function (req, file, callback) {
+    // Define the filename for the uploaded file
+    callback(null, file.originalname);
+  },
+});
+
+// Create the Multer upload instance with the specified storage configuration
+const upload = multer({ storage: storage });
+
+export const uploadImage = (req, res, next) => {
+  try {
+    // Use the upload middleware to handle the image upload
+    upload.single('image')(req, res, (error) => {
+      if (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Image upload failed', error: error.message });
+      } else {
+        // Access the uploaded file through req.file
+        const filePath = req.file.path;
+        const fileName = req.file.originalname; // Get the original filename
+
+        // Perform additional validation or checks on the file if needed
+
+        // Return a response indicating the successful upload with the filename
+        res.status(200).json({ message: 'Image uploaded successfully', fileName: fileName, filePath: filePath });
+      }
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Image upload failed', error: error.message });
+  }
+};
+

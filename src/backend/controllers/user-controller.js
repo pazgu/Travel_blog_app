@@ -9,7 +9,7 @@ export const getAllUser = async (req, res, next) => {
   try {
     users = await User.find(); //to attempt to retrieve all users from the database
   } catch (err) {
-    console.log(err);
+    console.error(err);
   }
   if (!users) {
     return res.status(404).json({ message: "No Users Found" });
@@ -29,7 +29,7 @@ export const signup = async (req, res, next) => {
   try {
     existingUser = await User.findOne({ email }); //email is the key value
   } catch (err) {
-    return console.log(err);
+    return console.error(err);
   }
   if (existingUser) {
     return res.status(400).json({ message: "User Already Exists! Login Instead" });
@@ -45,7 +45,7 @@ export const signup = async (req, res, next) => {
   try {
     await user.save(); // Saves the new user object to the database
   } catch (err) {
-    return console.log(err);
+    return console.error(err);
   }
   return res.status(201).json({ user }); //http status code of 201 means that a new resource has been successfully created
 };
@@ -56,7 +56,7 @@ export const login = async (req, res, next) => {
   try {
     existingUser = await User.findOne({ email }); 
   } catch (err) {
-    return console.log(err);
+    return console.error(err);
   }
   if (!existingUser) {
     return res.status(404).json({ message: "Invalid Email. Please Sign In To Join Our Journey" });
@@ -65,5 +65,5 @@ export const login = async (req, res, next) => {
   if (!isPasswordCorrect){
     return res.status(400).json({message: "Incorrect Password"});
   }
-  return res.status(200).json({message: "Login Successfully!"})
+  return res.status(200).json({message: "Login Successfully!", user: existingUser}) //return the user object 
 };

@@ -12,6 +12,7 @@ const authSlice = createSlice({ //creates a slice of the Redux store
       stste.isLoggedIn = true;
     },
     logout(stste) {
+      localStorage.removeItem("userId"); //so after logout the id of the user will be deleted from the local storage
       stste.isLoggedIn = false;
     }, //defining 2 reducers to handle login and logout actions
   },
