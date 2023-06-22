@@ -7,10 +7,12 @@ import config from "./congif";
 
 const app = express();
 app.use(cors()); // Allow all cors requests
-app.use(express.json()); //parse all the data to json format
+app.use(express.json()); //Parse all the data to json format
 app.use("/api/user", userRouter);
 //The middleware function will be called for any incoming requests that match the route "/api/user".
 app.use("/api/blog", blogRouter);
+app.use('/uploads', express.static('uploads')); //Serve static files from the 'uploads' directory
+
 
 mongoose
  .connect(config.dbConnectionString) //connects to the MongoDB database

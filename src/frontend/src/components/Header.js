@@ -3,21 +3,13 @@ import {AppBar, Box, Toolbar, Typography, Button, Tabs, Tab} from "@mui/material
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { authActions } from "../store";
+import { useLocation } from "react-router-dom";
 
 const Header = () => {
   const isLoggedIn = useSelector((state) => state.isLoggedIn);
   const [value, setValue] = useState(); //initialized to undefined so no button will be pressed
   const dispatch = useDispatch();
-  
-  // const [activeForm, setActiveForm] = useState('login');
-
-  // const handleLoginClick = () => {
-  //   setActiveForm('login');
-  // };
-
-  // const handleSignupClick = () => {
-  //   setActiveForm('signup');
-  // };
+  const location = useLocation();
 
   return (
     <AppBar
@@ -33,16 +25,15 @@ const Header = () => {
         <Typography variant="h4">Travel Blog App</Typography> {/*display text*/}
         {isLoggedIn && (
           <Box display="flex" marginLeft={"auto"} marginRight={"auto"}>
-            <Tabs
-              textColor="inherit" //inherit from the parent element
-              value={value} // Sets the value of the current selected tab
-              onChange={(_, val) => setValue(val)} // _ is used to indicate the event
-            >
-              <Tab LinkComponent={Link} to="/blogs" label="All Blogs" />
-              {/*allows to navigate between different pages or sections*/}
-              <Tab LinkComponent={Link} to="/myBlogs" label="My Blogs" />
-              <Tab LinkComponent={Link} to="/blogs/add" label="Add Blog" />
-            </Tabs>
+           <Tabs
+            textColor="inherit"
+            value={location.pathname} // Set the value of the current selected tab to the current pathname
+            onChange={(_, val) => setValue(val)}
+          >
+            <Tab LinkComponent={Link} to="/blogs" value="/blogs" label="All Blogs" />
+            <Tab LinkComponent={Link} to="/myBlogs" value="/myBlogs" label="My Blogs" />
+            <Tab LinkComponent={Link} to="/blogs/add" value="/blogs/add" label="Add Blog" />
+          </Tabs>
           </Box>
         )}
         <Box display="flex" marginLeft="auto">

@@ -1,4 +1,5 @@
 import { configureStore, createSlice } from "@reduxjs/toolkit";
+
 /*
 In this page I decided to use Redux reducers instead of local state management with react hooks
 in order to manage the state of the entire application in a single store,
@@ -19,6 +20,7 @@ const authSlice = createSlice({ //creates a slice of the Redux store
 });
 
 export const authActions = authSlice.actions; //export the action creators
+
 
 export const store = configureStore({ 
   reducer: authSlice.reducer, //export the reducer function from the slice

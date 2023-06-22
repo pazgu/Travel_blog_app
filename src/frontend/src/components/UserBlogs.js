@@ -35,7 +35,7 @@ const UserBlogs = () => {
                 isUser={true} //the current user can always delete his blogs
                 title={blog.title}
                 description={blog.description}
-                imageURL={blog.imageURL}
+                imageURL={blog.image}
                 userName={user.name}
               />
             ))}

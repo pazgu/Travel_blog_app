@@ -94,6 +94,7 @@ const AddBlog = () => {
     const file = e.target.files[0]; // Get the selected file from the input element
     setSelectedImage(file); // Store the selected image file
     setImageURL(URL.createObjectURL(file)); // Create a URL object from the file and set it as the image URL
+
   };
   return (
     <ThemeProvider theme={theme}>
@@ -152,7 +153,6 @@ const AddBlog = () => {
           </Button>
           <Button sx={{ mt: 2, borderRadius: 4, }} onClick={handleThemeChange}>Toggle Theme</Button>
         </Box>
-
       </form>
     </div>
     </ThemeProvider>

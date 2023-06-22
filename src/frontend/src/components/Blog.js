@@ -45,6 +45,8 @@ const Blog = ({ title, description, imageURL, userName, isUser, id }) => {
   const [expanded, setExpanded] = React.useState(false);
   const navigate = useNavigate();
 
+  const image = `http://localhost:5000/${imageURL}`
+
   const handleEdit = () => {
     navigate(`/myBlogs/${id}`); //navigate to blogDetail component
   };
@@ -64,7 +66,11 @@ const Blog = ({ title, description, imageURL, userName, isUser, id }) => {
   };
 
   const handleDelete = () => {
-    deleteRequest().then(() => navigate("/").then(() => navigate("/blogs")));
+    const confirmDelete = window.confirm("Are you sure you want to delete?"); // Display a confirmation dialog
+  
+    if (confirmDelete) {
+      deleteRequest().then(() => navigate("/").then(() => navigate("/blogs")));
+    }
   };
 
   const LikeButton = () => {
@@ -124,8 +130,8 @@ const Blog = ({ title, description, imageURL, userName, isUser, id }) => {
           title={title}
           subheader={format(currentDate, 'MMMM dd, yyyy')} // Format and display the current date
         />
-        <CardMedia component="img" height="400" src={`http://localhost:5000/${imageURL}`} alt={`${imageURL }`} />
-        <CardContent>
+         <CardMedia component="img" height="400" src={image} alt={`${image }`} />
+         <CardContent>
           <hr />
           <br />
           <Typography variant="body2" color="text.secondary">
