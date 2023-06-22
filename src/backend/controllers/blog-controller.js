@@ -31,7 +31,7 @@ export const addBlog = async (req, res, next) => {
   const blog = new Blog({
     title,
     description,
-    image,
+    image: image.replace(/\\/g, '/'), // Replace double backslashes with forward slashes for Windows compatibility
     user,
   });
   try {
@@ -58,7 +58,7 @@ export const addBlog = async (req, res, next) => {
 };
 
 export const updateBlog = async (req, res, next) => {
-  const { title, description } = req.body; //for now I can only update this fields because image and user are frontend properties
+  const { title, description } = req.body; //Only the specified fields can be updated 
   const blogId = req.params.id; // Extracts the blog id from the request parameters
   if (!mongoose.Types.ObjectId.isValid(blogId)) {
     return res.status(400).json({ message: "Invalid Blog ID" });
@@ -135,7 +135,6 @@ export const getBlogsByUserId = async (req, res, next) => {
   let userBlogs;
   try {
     userBlogs = await User.findById(userId).populate("blogs");
-    //The populate method is used to retrieve the blogs property of the User model, associated with the current user
   } catch (err) {
     return console.error(err);
   }
@@ -145,7 +144,6 @@ export const getBlogsByUserId = async (req, res, next) => {
   if (!userBlogs) {
     return res.status(404).json({ message: "No Blog Found" });
   }
-  //const blogs = userBlogs.blogs; //So the response json body will inculde only the blogs details without the user credentials
   return res.status(200).json({ user: userBlogs });
 };
 
@@ -175,10 +173,6 @@ export const uploadImage = (req, res, next) => {
         // Access the uploaded file through req.file
         const filePath = req.file.path;
         const fileName = req.file.originalname; // Get the original filename
-
-        // Perform additional validation or checks on the file if needed
-
-        // Return a response indicating the successful upload with the filename
         res.status(200).json({ message: 'Image uploaded successfully', fileName: fileName, filePath: filePath });
       }
     });

@@ -27,10 +27,11 @@ function App() {
       <main
         style={{
           backgroundImage: `url("map.jpeg")`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
+          backgroundRepeat: "repeat",
+          backgroundPosition: "top",
+          backgroundSize: "100%",
           minHeight: "100vh",
-          paddingTop: "0.2px"
+          paddingTop: "0.2px",
         }}
       >
         <Routes>

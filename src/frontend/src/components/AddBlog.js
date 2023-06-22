@@ -21,21 +21,6 @@ const AddBlog = () => {
       [e.target.name]: e.target.value, //dynamically update the name attribute of the input field
     }));
   };
-  //Function to send a request to add a blog
-  const sendRequestToAddBlog = async () => {
-    try {
-      const res = await axios.post("http://localhost:5000/api/blog/add", {
-        title: inputs.title,
-        description: inputs.description,
-        image: inputs.imageURL,
-        user: localStorage.getItem("userId"),
-      });
-      const data = await res.data;
-      return data;
-    } catch (err) {
-      console.error(err);
-    }
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -58,6 +43,7 @@ const AddBlog = () => {
         });
   
         const data = addBlogRes.data;
+        console.log(imageURL);
         console.log(data); // Handle the response data as needed
         navigate("/myBlogs");
       } catch (error) {
@@ -109,7 +95,6 @@ const AddBlog = () => {
     setSelectedImage(file); // Store the selected image file
     setImageURL(URL.createObjectURL(file)); // Create a URL object from the file and set it as the image URL
   };
-
   return (
     <ThemeProvider theme={theme}>
     <div>

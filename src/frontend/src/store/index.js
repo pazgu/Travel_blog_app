@@ -1,6 +1,6 @@
 import { configureStore, createSlice } from "@reduxjs/toolkit";
 /*
-In this page I decided to use Redux reducers instaed of local state management with react hooks
+In this page I decided to use Redux reducers instead of local state management with react hooks
 in order to manage the state of the entire application in a single store,
 which makes it easier to maintain and debug
 */

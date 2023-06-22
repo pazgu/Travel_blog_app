@@ -38,10 +38,5 @@ const userScheme = new Scheme({
 export default mongoose.model("User", userScheme);
 //in mongodb it will stored as users
 
-//a model represents a collection of documents in the MongoDB database and provides an interface for creating, reading, updating, and deleting those documents.
-
-//A schema defines the structure of the documents that will be stored in the corresponding MongoDB collection.
-//It includes the properties of the documents, their types, and any validation rules.
-
-// Once the schema is defined, it can be used to create a new Mongoose model with the mongoose.model() function. This function takes two arguments: the name of the collection and the schema object.
+// This function takes two arguments: the name of the collection and the schema object.
 // The resulting model can then be used to interact with the corresponding MongoDB collection.

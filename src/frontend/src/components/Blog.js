@@ -41,7 +41,7 @@ const ExpandMore = styled((props) => {
   }),
 }));
 
-const Blog = ({ title, description, imageurl, userName, isUser, id }) => {
+const Blog = ({ title, description, imageURL, userName, isUser, id }) => {
   const [expanded, setExpanded] = React.useState(false);
   const navigate = useNavigate();
 
@@ -124,7 +124,7 @@ const Blog = ({ title, description, imageurl, userName, isUser, id }) => {
           title={title}
           subheader={format(currentDate, 'MMMM dd, yyyy')} // Format and display the current date
         />
-        <CardMedia component="img" height="400" src="pexels.jpeg" alt={`${imageurl }`} />
+        <CardMedia component="img" height="400" src={`http://localhost:5000/${imageURL}`} alt={`${imageURL }`} />
         <CardContent>
           <hr />
           <br />
@@ -163,3 +163,7 @@ const Blog = ({ title, description, imageurl, userName, isUser, id }) => {
 };
 
 export default Blog;
+
+
+
+
